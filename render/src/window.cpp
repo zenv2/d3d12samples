@@ -3,7 +3,7 @@
 
 namespace render
 {
-    Window::Window(const int w, const int h, const std::string title) :
+    Window::Window(Sample* pSample, const int w, const int h, const std::string title) :
         m_width(w),
         m_height(h),
         m_title(title),
@@ -33,7 +33,7 @@ namespace render
             nullptr,
             nullptr,
             GetModuleHandle(NULL),
-            this );
+            pSample );
         
         if(m_hwnd == NULL)
         {
@@ -66,8 +66,24 @@ namespace render
 
     LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
+
         switch(message)
         {
+        case WM_CREATE:
+            {
+                LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+                SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+            }
+            return 0;
+        case WM_PAINT:
+            {
+                Sample* pSample = reinterpret_cast<Sample*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+                if(pSample)
+                {
+                    pSample->Render();
+                }
+            }
+            return 0;
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;

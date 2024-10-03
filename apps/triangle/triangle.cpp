@@ -47,4 +47,38 @@ namespace application
         m_window.Show();
         m_window.MainLoop();
     }
+
+    void Triangle::WaitForPreviousFrame()
+    {
+        m_commander.WaitForPreviousFrame();
+        m_swapchain.UpdateFrameIndex();
+    }
+
+    void Triangle::Render()
+    {
+        auto pCommandList = m_commander.GetCommandList();
+        m_commander.Reset(m_pPipeline);
+
+        D3D12_RESOURCE_BARRIER rtBarrier;
+        m_swapchain.TransitionBarrierPresentToRenderTarget(rtBarrier);
+        pCommandList->ResourceBarrier(1, &rtBarrier);
+
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_swapchain.GetRtvHandle());
+
+        pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+        const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+        pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+        D3D12_RESOURCE_BARRIER presentBarrier;
+        m_swapchain.TransitionBarrierRenderTargetToPresent(presentBarrier);
+        pCommandList->ResourceBarrier(1, &presentBarrier);
+
+        pCommandList->Close();
+
+        m_commander.Execute();
+
+        m_swapchain.Present();
+
+        WaitForPreviousFrame();
+    }
 }

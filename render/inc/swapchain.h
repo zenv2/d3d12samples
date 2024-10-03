@@ -11,6 +11,12 @@ namespace render
         Swapchain(const Window& window, Device& device, Commander& commander);
         ~Swapchain();
 
+        void UpdateFrameIndex() { m_frameIndex = m_swapchain->GetCurrentBackBufferIndex(); }
+        void TransitionBarrierPresentToRenderTarget(D3D12_RESOURCE_BARRIER& barrier);
+        void TransitionBarrierRenderTargetToPresent(D3D12_RESOURCE_BARRIER& barrier);
+        D3D12_CPU_DESCRIPTOR_HANDLE GetRtvHandle();
+        void Present();
+
         friend class Pipeline;
     
     protected:

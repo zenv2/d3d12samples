@@ -64,4 +64,38 @@ namespace render
         SafeRelease(m_rtvHeap);
         SafeRelease(m_swapchain);
     }
+
+    D3D12_CPU_DESCRIPTOR_HANDLE Swapchain::GetRtvHandle()
+    {
+        auto handle = m_rtvHeap->GetCPUDescriptorHandleForHeapStart();
+        handle.ptr += (m_frameIndex * m_rtvDescriptorSize);
+        return handle;
+    }
+
+    void Swapchain::TransitionBarrierPresentToRenderTarget(D3D12_RESOURCE_BARRIER& barrier)
+    {
+        ZeroMemory(&barrier, sizeof(D3D12_RESOURCE_BARRIER));
+        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrier.Transition.pResource = m_renderTargets[m_frameIndex];
+        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    }
+
+    void Swapchain::TransitionBarrierRenderTargetToPresent(D3D12_RESOURCE_BARRIER& barrier)
+    {
+        ZeroMemory(&barrier, sizeof(D3D12_RESOURCE_BARRIER));
+        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrier.Transition.pResource = m_renderTargets[m_frameIndex];
+        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+        barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    }
+
+    void Swapchain::Present()
+    {
+        ThrowIfFailed(m_swapchain->Present(1, 0));
+    }
 }

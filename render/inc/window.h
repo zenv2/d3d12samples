@@ -3,12 +3,14 @@
 #include <windows.h>
 #include <string>
 
+#include <sample.h>
+
 namespace render
 {
     class Window
     {
     public:
-        Window(const int w, const int h, const std::string title);
+        Window(Sample* pSample, const int w, const int h, const std::string title);
         ~Window();
 
         void Show() { ShowWindow(m_hwnd, SW_SHOW); }

@@ -21,6 +21,8 @@ namespace render
         void SetPS(PixelShader& ps);
         void Finalize(Device& device);
 
+        ID3D12PipelineState* GetState() const { return m_pPipelineState; }
+
     private:
         void Init();
 
