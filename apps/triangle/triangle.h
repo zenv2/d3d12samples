@@ -6,6 +6,7 @@
 #include <descriptor.h>
 #include <pipeline.h>
 #include <shader.h>
+#include <buffer.h>
 
 using namespace render;
 
@@ -21,11 +22,11 @@ namespace application
         void Setup();
         void Run();
 
-        void Render();
+        void OnRender();
+        void OnDestroy();
     
-        static constexpr int WIDTH = 800;
-        static constexpr int HEIGHT = 600;
     private:
+
         Window m_window{this, WIDTH, HEIGHT, "DX12 Triangle"};
         Device m_device{};
         Commander m_commander{m_device};
@@ -35,6 +36,11 @@ namespace application
         Pipeline* m_pPipeline = nullptr;
         VertexShader* m_pVS = nullptr;
         PixelShader* m_pPS = nullptr;
+        VertexBuffer* m_pVB = nullptr;
+        IndexBuffer* m_pIB = nullptr;
+
+        D3D12_VIEWPORT m_viewport;
+        D3D12_RECT m_scissorRect;
 
         void WaitForPreviousFrame();
     };

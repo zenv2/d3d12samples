@@ -16,6 +16,7 @@ namespace render
         friend class Swapchain;
         friend class Descriptor;
         friend class Pipeline;
+        friend class Buffer;
     protected:
         IDXGIFactory4* GetFactory() const { return m_pFactory; }
         ID3D12Device* GetDevice() { return m_pDevice; }

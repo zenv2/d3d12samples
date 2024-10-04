@@ -80,7 +80,7 @@ namespace render
                 Sample* pSample = reinterpret_cast<Sample*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
                 if(pSample)
                 {
-                    pSample->Render();
+                    pSample->OnRender();
                 }
             }
             return 0;

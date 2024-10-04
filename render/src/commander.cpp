@@ -36,6 +36,7 @@ namespace render
 
     Commander::~Commander()
     {
+        CloseHandle(m_fenceEvent);
         SafeRelease(m_fence);
         SafeRelease(m_pCommandList);
         SafeRelease(m_pAllocator);

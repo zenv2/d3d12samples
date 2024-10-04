@@ -13,10 +13,9 @@ namespace render
         Descriptor(Device& dev);
         ~Descriptor();
     
-        friend class Pipeline;
-    
-    protected:
         ID3D12RootSignature* GetRootSignature() { return m_pRootSignature; }
+   
+    protected:
 
     private:
         Device& m_device;
