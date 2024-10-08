@@ -3,14 +3,13 @@
 #include <windows.h>
 #include <string>
 
-#include <sample.h>
 
 namespace render
 {
     class Window
     {
     public:
-        Window(Sample* pSample, const int w, const int h, const std::string title);
+        Window(void* pSample, const uint32_t w, const uint32_t h, const std::string title);
         ~Window();
 
         void Show() { ShowWindow(m_hwnd, SW_SHOW); }
@@ -29,8 +28,8 @@ namespace render
     private:
         HWND m_hwnd;
 
-        int m_width;
-        int m_height;
+        uint32_t m_width;
+        uint32_t m_height;
         std::string m_title;
     };
 }

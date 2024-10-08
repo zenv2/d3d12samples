@@ -1,9 +1,10 @@
 #include <window.h>
+#include <sample.h>
 #include "utils.h"
 
 namespace render
 {
-    Window::Window(Sample* pSample, const int w, const int h, const std::string title) :
+    Window::Window(void* pSample, const uint32_t w, const uint32_t h, const std::string title) :
         m_width(w),
         m_height(h),
         m_title(title),
