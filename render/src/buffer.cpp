@@ -26,13 +26,13 @@ namespace render
         resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
         resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-        device.GetDevice()->CreateCommittedResource(
+        ThrowIfFailed(device.GetDevice()->CreateCommittedResource(
             &heapProps,
             D3D12_HEAP_FLAG_NONE,
             &resourceDesc,
             D3D12_RESOURCE_STATE_GENERIC_READ,
             nullptr,
-            IID_PPV_ARGS(&m_pBuffer));
+            IID_PPV_ARGS(&m_pBuffer)));
     }
 
     Buffer::~Buffer()

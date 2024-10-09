@@ -29,6 +29,7 @@ namespace render
         D3D12_GRAPHICS_PIPELINE_STATE_DESC m_psoDesc;
         D3D12_RASTERIZER_DESC m_rasterizerDesc;
         D3D12_BLEND_DESC m_blendDesc;
+        D3D12_DEPTH_STENCIL_DESC m_depthStencilDesc;
 
         ID3D12PipelineState* m_pPipelineState;
         ID3DBlob* m_pVertexShader;

@@ -22,8 +22,8 @@ namespace render
 
     protected:
         const HWND GetWindowHandle() const { return m_hwnd; }
-        const int GetWidth() const { return m_width; }
-        const int GetHeight() const { return m_height; }
+        const uint32_t GetWidth() const { return m_width; }
+        const uint32_t GetHeight() const { return m_height; }
 
     private:
         HWND m_hwnd;

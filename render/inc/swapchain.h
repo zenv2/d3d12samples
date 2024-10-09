@@ -17,6 +17,7 @@ namespace render
         void TransitionBarrierPresentToRenderTarget(D3D12_RESOURCE_BARRIER& barrier);
         void TransitionBarrierRenderTargetToPresent(D3D12_RESOURCE_BARRIER& barrier);
         D3D12_CPU_DESCRIPTOR_HANDLE GetRtvHandle();
+        D3D12_CPU_DESCRIPTOR_HANDLE GetDsvHandle();
         void Present();
 
         friend class Pipeline;
@@ -30,7 +31,9 @@ namespace render
         
         IDXGISwapChain3* m_swapchain;
         ID3D12DescriptorHeap* m_rtvHeap;
+        ID3D12DescriptorHeap* m_dsvHeap;
         ID3D12Resource* m_renderTargets[FRAME_COUNT];
+        ID3D12Resource* m_depthStencilBuffer;
 
         uint32_t m_frameIndex;
         uint32_t m_rtvDescriptorSize;

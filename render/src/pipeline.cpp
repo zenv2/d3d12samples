@@ -26,6 +26,7 @@ namespace render
         ZeroMemory(&m_psoDesc, sizeof(m_psoDesc));
         ZeroMemory(&m_rasterizerDesc, sizeof(m_rasterizerDesc));
         ZeroMemory(&m_blendDesc, sizeof(m_blendDesc));
+        ZeroMemory(&m_depthStencilDesc, sizeof(m_depthStencilDesc));
 
         m_rasterizerDesc.FillMode               = D3D12_FILL_MODE_SOLID;
         m_rasterizerDesc.CullMode               = D3D12_CULL_MODE_BACK;
@@ -51,12 +52,21 @@ namespace render
         m_blendDesc.RenderTarget[0].BlendOpAlpha            = D3D12_BLEND_OP_ADD;
         m_blendDesc.RenderTarget[0].LogicOp                 = D3D12_LOGIC_OP_NOOP;
         m_blendDesc.RenderTarget[0].RenderTargetWriteMask   = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+        m_depthStencilDesc.DepthEnable = TRUE;
+        m_depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+        m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+        m_depthStencilDesc.StencilEnable = FALSE;
+        m_depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+        m_depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+        const D3D12_DEPTH_STENCILOP_DESC defaultStencilOpDesc = {D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS};
+        m_depthStencilDesc.FrontFace = defaultStencilOpDesc;
+        m_depthStencilDesc.BackFace = defaultStencilOpDesc;
         
         m_psoDesc.RasterizerState = m_rasterizerDesc;
         m_psoDesc.BlendState = m_blendDesc;
 
-        m_psoDesc.DepthStencilState.DepthEnable = FALSE;
-        m_psoDesc.DepthStencilState.StencilEnable = FALSE;
+        m_psoDesc.DepthStencilState = m_depthStencilDesc;
 
         m_psoDesc.SampleMask = UINT_MAX;
         m_psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
