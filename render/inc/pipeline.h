@@ -12,7 +12,7 @@ namespace render
     class Pipeline
     {
     public:
-        Pipeline();
+        Pipeline(Swapchain& swapchain);
         ~Pipeline();
 
         void SetInputLayout(D3D12_INPUT_ELEMENT_DESC* pInputLayout, int numElements);
@@ -24,7 +24,7 @@ namespace render
         ID3D12PipelineState* GetState() const { return m_pPipelineState; }
 
     private:
-        void Init();
+        void Init(Swapchain& swapchain);
 
         D3D12_GRAPHICS_PIPELINE_STATE_DESC m_psoDesc;
         D3D12_RASTERIZER_DESC m_rasterizerDesc;

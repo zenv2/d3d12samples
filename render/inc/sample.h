@@ -29,6 +29,8 @@ namespace render
 
         Sample();
         Sample(uint32_t width, uint32_t height, std::string title);
+        Sample(uint32_t width, uint32_t height, std::string title, bool depthEnable);
+        Sample(uint32_t width, uint32_t height, std::string title, const DXGI_FORMAT rtFormat, const DXGI_FORMAT dsFormat);
         ~Sample();
 
         virtual void Setup() = 0;
@@ -49,6 +51,8 @@ namespace render
         Pipeline* m_pPipeline = nullptr;
 
         void WaitForPreviousFrame();
+        void TransitionPresentToRenderTarget();
+        void TransitionRenderTargetToPrsent();
 
         private:
         std::string m_title;

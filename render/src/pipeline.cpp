@@ -4,14 +4,16 @@
 
 #include <pipeline.h>
 
+#include <swapchain.h>
+
 namespace render
 {
-    Pipeline::Pipeline() :
+    Pipeline::Pipeline(Swapchain& swapchain) :
         m_pVertexShader(nullptr),
         m_pPixelShader(nullptr),
         m_pPipelineState(nullptr)
     {
-        Init();
+        Init(swapchain);
     }
 
     Pipeline::~Pipeline()
@@ -21,7 +23,7 @@ namespace render
         SafeRelease(m_pPipelineState);
     }
 
-    void Pipeline::Init()
+    void Pipeline::Init(Swapchain& swapchain)
     {
         ZeroMemory(&m_psoDesc, sizeof(m_psoDesc));
         ZeroMemory(&m_rasterizerDesc, sizeof(m_rasterizerDesc));
@@ -53,29 +55,36 @@ namespace render
         m_blendDesc.RenderTarget[0].LogicOp                 = D3D12_LOGIC_OP_NOOP;
         m_blendDesc.RenderTarget[0].RenderTargetWriteMask   = D3D12_COLOR_WRITE_ENABLE_ALL;
 
-        m_depthStencilDesc.DepthEnable = TRUE;
-        m_depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-        m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-        m_depthStencilDesc.StencilEnable = FALSE;
-        m_depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-        m_depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-        const D3D12_DEPTH_STENCILOP_DESC defaultStencilOpDesc = {D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS};
-        m_depthStencilDesc.FrontFace = defaultStencilOpDesc;
-        m_depthStencilDesc.BackFace = defaultStencilOpDesc;
         
         m_psoDesc.RasterizerState = m_rasterizerDesc;
         m_psoDesc.BlendState = m_blendDesc;
 
-        m_psoDesc.DepthStencilState = m_depthStencilDesc;
 
         m_psoDesc.SampleMask = UINT_MAX;
         m_psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
         m_psoDesc.NumRenderTargets = 1;
         //Todo: Get from Swapchain
-        m_psoDesc.RTVFormats[0] = DXGI_FORMAT_B8G8R8A8_UNORM;
-
+        m_psoDesc.RTVFormats[0] = swapchain.GetRtvFormat();
+        
         m_psoDesc.SampleDesc.Count = 1;
+
+        if(swapchain.GetDsvFormat() != DXGI_FORMAT_UNKNOWN)
+        {
+            m_depthStencilDesc.DepthEnable = TRUE;
+            m_depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+            m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+            m_depthStencilDesc.StencilEnable = FALSE;
+            m_depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+            m_depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+            const D3D12_DEPTH_STENCILOP_DESC defaultStencilOpDesc = {D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS};
+            m_depthStencilDesc.FrontFace = defaultStencilOpDesc;
+            m_depthStencilDesc.BackFace = defaultStencilOpDesc;
+
+            m_psoDesc.DepthStencilState = m_depthStencilDesc;
+
+            m_psoDesc.DSVFormat = swapchain.GetDsvFormat();
+        }
     }
 
     void Pipeline::SetInputLayout(D3D12_INPUT_ELEMENT_DESC* pInputLayout, int numElements)
