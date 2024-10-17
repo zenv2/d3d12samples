@@ -20,8 +20,8 @@ namespace render
     // Caution: order matters!
     const char targets[SHADER_TYPE_MAX][10] =
     {
-        "vs_5_0",
-        "ps_5_0"
+        "vs_5_1",
+        "ps_5_1"
     };
     
     template<SHADER_TYPE _type>

@@ -35,6 +35,7 @@ namespace render
 
         virtual void Setup() = 0;
         virtual void Run() = 0;
+        virtual void OnUpdate() = 0;
         virtual void OnRender() = 0;
         virtual void OnDestroy() = 0;
 

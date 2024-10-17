@@ -81,6 +81,7 @@ namespace render
                 Sample* pSample = reinterpret_cast<Sample*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
                 if(pSample)
                 {
+                    pSample->OnUpdate();
                     pSample->OnRender();
                 }
             }
