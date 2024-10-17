@@ -17,6 +17,7 @@ namespace application
         void Setup();
         void Run();
 
+        void OnUpdate() {}
         void OnRender();
         void OnDestroy();
     

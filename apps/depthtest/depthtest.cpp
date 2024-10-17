@@ -80,6 +80,11 @@ namespace application
             OnDestroy();
         }
 
+        void OnUpdate()
+        {
+            // Do nothing
+        }
+
         void OnRender()
         {
             const float clearColor[] = {0.2f, 0.0f, 0.2f, 1.0f};
