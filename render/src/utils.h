@@ -17,6 +17,15 @@ namespace render
         }
     }
 
+    //Todo: Templetize with _FILE_ and _LINE_ from caller if possible
+    inline void ThrowIfAssert(bool condition)
+    {
+        if(!condition)
+        {
+            throw std::exception();
+        }
+    }
+
     inline void SafeRelease(IUnknown* ptr)
     {
         if(ptr != nullptr)

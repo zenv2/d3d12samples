@@ -83,19 +83,51 @@ namespace render
 
     void IndexBuffer::Init(void* pBuff)
     {
-        uint8_t* pVertexDataBegin;
+        uint8_t* pDataBegin;
         D3D12_RANGE readRange;
         readRange.Begin = 0;
         readRange.End = 0;
 
-        ThrowIfFailed(GetBuffer()->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin)));
+        ThrowIfFailed(GetBuffer()->Map(0, &readRange, reinterpret_cast<void**>(&pDataBegin)));
 
-        memcpy(pVertexDataBegin, pBuff, m_bufferSize);
+        memcpy(pDataBegin, pBuff, m_bufferSize);
 
         GetBuffer()->Unmap(0, nullptr);
 
         m_view.BufferLocation = GetBuffer()->GetGPUVirtualAddress();
         m_view.Format = DXGI_FORMAT_R32_UINT;
         m_view.SizeInBytes = m_bufferSize;
+    }
+
+    ConstantBuffer::ConstantBuffer(Device& device, uint32_t sizeInBytes) :
+        m_pMappedCpuVa(nullptr),
+        m_constantDataSize(sizeInBytes),
+        m_alignedBufferSize(ConstantBufferAlignedSize(sizeInBytes)),
+        Buffer(device, D3D12_HEAP_TYPE_UPLOAD, m_alignedBufferSize)
+    {
+        D3D12_RANGE readRange;
+        readRange.Begin = 0;
+        readRange.End = 0;
+        ThrowIfFailed(GetBuffer()->Map(0, &readRange, reinterpret_cast<void**>(&m_pMappedCpuVa)));
+    }
+
+    ConstantBuffer::~ConstantBuffer()
+    {
+        if(m_pMappedCpuVa)
+        {
+            GetBuffer()->Unmap(0, nullptr);
+            m_pMappedCpuVa = nullptr;
+        }
+    }
+
+    void ConstantBuffer::Upload(void* pBuff, uint32_t index)
+    {
+        static constexpr uint32_t PER_OBJ_ALIGN_SIZE = 256;
+        uint32_t perObjAlignOffset = (index * ((m_constantDataSize + (PER_OBJ_ALIGN_SIZE-1)) & ~(PER_OBJ_ALIGN_SIZE-1)));
+
+        ThrowIfAssert(m_pMappedCpuVa != nullptr);
+        ThrowIfAssert( (perObjAlignOffset + m_constantDataSize) < m_alignedBufferSize);
+
+        memcpy((m_pMappedCpuVa + perObjAlignOffset), pBuff, m_constantDataSize);
     }
 }
