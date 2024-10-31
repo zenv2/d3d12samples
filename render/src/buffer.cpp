@@ -99,10 +99,10 @@ namespace render
         m_view.SizeInBytes = m_bufferSize;
     }
 
-    ConstantBuffer::ConstantBuffer(Device& device, uint32_t sizeInBytes) :
+    ConstantBuffer::ConstantBuffer(Device& device, uint32_t sizeInBytes, uint32_t count) :
         m_pMappedCpuVa(nullptr),
         m_constantDataSize(sizeInBytes),
-        m_alignedBufferSize(ConstantBufferAlignedSize(sizeInBytes)),
+        m_alignedBufferSize(ConstantBufferAlignedSize(sizeInBytes, count)),
         Buffer(device, D3D12_HEAP_TYPE_UPLOAD, m_alignedBufferSize)
     {
         D3D12_RANGE readRange;
@@ -120,14 +120,29 @@ namespace render
         }
     }
 
+    uint32_t ConstantBuffer::ConstantBufferAlignedSize(const uint32_t sizeInBytes, const uint32_t count)
+    {
+        uint32_t alignedConstSize = ( sizeInBytes + (CONSTANT_PER_OBJ_ALIGN_SIZE-1) ) & ~(CONSTANT_PER_OBJ_ALIGN_SIZE-1);
+        alignedConstSize *= count;
+        return ((alignedConstSize + (CONSTANT_BUFFER_ALIGN_SIZE-1)) & ~(CONSTANT_BUFFER_ALIGN_SIZE-1));
+    }
+
     void ConstantBuffer::Upload(void* pBuff, uint32_t index)
     {
-        static constexpr uint32_t PER_OBJ_ALIGN_SIZE = 256;
-        uint32_t perObjAlignOffset = (index * ((m_constantDataSize + (PER_OBJ_ALIGN_SIZE-1)) & ~(PER_OBJ_ALIGN_SIZE-1)));
+        uint32_t perObjAlignOffset = (index * ((m_constantDataSize + (CONSTANT_PER_OBJ_ALIGN_SIZE-1)) & ~(CONSTANT_PER_OBJ_ALIGN_SIZE-1)));
 
         ThrowIfAssert(m_pMappedCpuVa != nullptr);
         ThrowIfAssert( (perObjAlignOffset + m_constantDataSize) < m_alignedBufferSize);
 
         memcpy((m_pMappedCpuVa + perObjAlignOffset), pBuff, m_constantDataSize);
+    }
+
+    D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGpuVa(uint32_t index)
+    {
+        uint32_t perObjAlignOffset = (index * ((m_constantDataSize + (CONSTANT_PER_OBJ_ALIGN_SIZE-1)) & ~(CONSTANT_PER_OBJ_ALIGN_SIZE-1)));
+
+        ThrowIfAssert( (perObjAlignOffset + m_constantDataSize) < m_alignedBufferSize);
+
+        return GetBuffer()->GetGPUVirtualAddress() + perObjAlignOffset;
     }
 }

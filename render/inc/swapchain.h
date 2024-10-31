@@ -14,6 +14,8 @@ namespace render
         ~Swapchain();
 
         void CreateDepthStencil(DXGI_FORMAT fmt);
+        const uint32_t GetFrameCount() const { return m_frameCount; }
+        const uint32_t GetFrameIndex() const { return m_frameIndex; }
         void UpdateFrameIndex() { m_frameIndex = m_swapchain->GetCurrentBackBufferIndex(); }
         void TransitionBarrierPresentToRenderTarget(D3D12_RESOURCE_BARRIER& barrier);
         void TransitionBarrierRenderTargetToPresent(D3D12_RESOURCE_BARRIER& barrier);

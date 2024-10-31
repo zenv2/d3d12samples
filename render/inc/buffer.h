@@ -58,16 +58,17 @@ namespace render
     {
         public:
 
-        ConstantBuffer(Device& device, uint32_t sizeInBytes);
+        ConstantBuffer(Device& device, uint32_t sizeInBytes, uint32_t count);
         ~ConstantBuffer();
 
         void Upload(void* pBuff, uint32_t index);
-        const D3D12_GPU_VIRTUAL_ADDRESS GetGpuVa() const { return GetBuffer()->GetGPUVirtualAddress(); }
+        D3D12_GPU_VIRTUAL_ADDRESS GetGpuVa(uint32_t index);
         
         private:
+        static constexpr uint32_t CONSTANT_PER_OBJ_ALIGN_SIZE = 256;
         static constexpr uint32_t CONSTANT_BUFFER_ALIGN_SIZE = (64 * 1024);
 
-        const uint32_t ConstantBufferAlignedSize(const uint32_t sizeInBytes) const { return ((sizeInBytes + (CONSTANT_BUFFER_ALIGN_SIZE-1)) & ~(CONSTANT_BUFFER_ALIGN_SIZE-1)); }
+        uint32_t ConstantBufferAlignedSize(const uint32_t sizeInBytes, const uint32_t count);
 
         uint32_t m_constantDataSize;
         uint32_t m_alignedBufferSize;
